@@ -3,7 +3,7 @@ Template repo for the wg_display_embedded widgets to make creation of own widget
 
 ## Size-optimization
 - Strips custom sections from the core wasm with `wasm-tools strip`.
-- optionally runs `wasm-opt -Oz` (Binaryen) before component conversion.
+- optionally runs `wasm-opt -Oz --enable-bulk-memory --enable-sign-ext` (Binaryen) before component conversion.
 
 ### Workflow knobs
 

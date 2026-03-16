@@ -40,7 +40,7 @@ jobs:
     - name: Optimize core wasm for size
       if: ${{ env.USE_WASM_OPT == '1' }}
       working-directory: ./widget
-      run: wasm-opt -Oz widget.stripped.wasm -o widget.optimized.wasm
+      run: wasm-opt -Oz --enable-bulk-memory --enable-sign-ext widget.stripped.wasm -o widget.optimized.wasm
     - name: Select core wasm artifact
       working-directory: ./widget
       run: |
