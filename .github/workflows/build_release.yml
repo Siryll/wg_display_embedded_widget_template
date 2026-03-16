@@ -1,0 +1,71 @@
+name: Build release
+
+on:
+  push:
+    tags:
+      # Push events to matching v*, i.e. v1.0, v20.15.10
+      - 'v*'
+
+env:
+  CARGO_TERM_COLOR: always
+  MAX_PRECOMPILED_SIZE_BYTES: "500000"
+  USE_WASM_OPT: "1"
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: recursive
+    - name: Install wasm-tools
+      run: cargo install --git https://github.com/bytecodealliance/wasm-tools wasm-tools
+    - name: Install binaryen
+      if: ${{ env.USE_WASM_OPT == '1' }}
+      run: sudo apt-get update && sudo apt-get install -y binaryen
+    - name: Validate WIT
+      run: wasm-tools component wit wg_display_widget_wit/wit
+    - name: Add WASM target
+      run: rustup target add wasm32-unknown-unknown
+    - name: Build
+      working-directory: ./widget
+      run: cargo build --target wasm32-unknown-unknown --release
+    - name: Strip core wasm
+      working-directory: ./widget
+      run: wasm-tools strip target/wasm32-unknown-unknown/release/widget.wasm -o widget.stripped.wasm
+    - name: Optimize core wasm for size
+      if: ${{ env.USE_WASM_OPT == '1' }}
+      working-directory: ./widget
+      run: wasm-opt -Oz widget.stripped.wasm -o widget.optimized.wasm
+    - name: Select core wasm artifact
+      working-directory: ./widget
+      run: |
+        if [ "${USE_WASM_OPT}" = "1" ]; then
+          cp widget.optimized.wasm widget.core.final.wasm
+        else
+          cp widget.stripped.wasm widget.core.final.wasm
+        fi
+    - name: Convert to component
+      working-directory: ./widget
+      run: wasm-tools component new widget.core.final.wasm -o widget.component.wasm
+    - name: Build precompiler
+      working-directory: ./wg_display_embedded_precompiler
+      run: cargo build --release
+    - name: Precompile component for ESP32
+      run: ./wg_display_embedded_precompiler/target/release/wg-display-embedded-precompiler widget/widget.component.wasm  widget.precompiled.wasm
+    - name: Enforce precompiled wasm budget
+      run: |
+        actual_size=$(wc -c < widget.precompiled.wasm)
+        if [ "$actual_size" -gt "$MAX_PRECOMPILED_SIZE_BYTES" ]; then
+          echo "Precompiled wasm too large: ${actual_size} bytes (max ${MAX_PRECOMPILED_SIZE_BYTES})"
+          exit 1
+        fi
+        echo "Precompiled wasm size OK: ${actual_size} bytes"
+    - uses: ncipollo/release-action@v1
+      with:
+          artifacts: "widget.precompiled.wasm"
+          artifactErrorsFailBuild: true

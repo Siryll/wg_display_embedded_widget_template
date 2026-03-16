@@ -1,0 +1,6 @@
+[submodule "wg_display_embedded_precompiler"]
+	path = wg_display_embedded_precompiler
+	url = git@github.com:Siryll/wg_display_embedded_precompiler.git
+[submodule "wg_display_widget_wit"]
+	path = wg_display_widget_wit
+	url = https://github.com/eliabieri/wg_display_widget_wit.git
