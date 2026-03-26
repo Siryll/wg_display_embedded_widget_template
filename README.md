@@ -191,11 +191,6 @@ cargo build --release --manifest-path wg_display_embedded_precompiler/Cargo.toml
 
 ## Size Constraints
 
-| Constraint | Limit | Source |
-|---|---|---|
-| Widget WASM binary | ~512 KB | HTTP client response buffer (`EspHttpClient`) |
-| NVS storage key limit | Determined by NVS partition size | Flash partition `storage` (~13 MB total) |
-
 If your widget exceeds ~512 KB after precompilation, the installation will fail with an HTTP error. Reduce size by:
 - Minimizing dependencies
 - Using `default-features = false` on all crates
