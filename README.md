@@ -191,10 +191,6 @@ cargo build --release --manifest-path wg_display_embedded_precompiler/Cargo.toml
 
 ## Size Constraints
 
-If your widget exceeds ~512 KB after precompilation, the installation will fail with an HTTP error. Reduce size by:
-- Minimizing dependencies
-- Using `default-features = false` on all crates
-- Avoiding large embedded data (fonts, lookup tables)
-- Running `wasm-opt -Os` before the component/precompile steps
-
+Since embedded WG Display version 1.3.0 the max size depends on the size of the download buffer, currently this is set to 1MB.
+Increase the buffer size in [http_client/mod.rs](https://github.com/Siryll/wg_display_embedded/blob/master/embedded_app/src/http_client/mod.rs) should your widget exceed this 1MB limit.
 ---
