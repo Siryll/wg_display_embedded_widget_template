@@ -93,7 +93,7 @@ interface http {
 ```
 
 **Limitations:**
-- Maximum response size: **~512 KB** (HTTP client buffer limit)
+- Maximum response size: **~1MB** (HTTP client buffer limit)
 - Timeout: **30 seconds**
 - No TLS certificate verification
 - Redirects: automatic, up to 5 hops
