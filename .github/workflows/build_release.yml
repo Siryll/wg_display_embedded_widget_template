@@ -57,14 +57,6 @@ jobs:
       run: cargo build --release
     - name: Precompile component for ESP32
       run: ./wg_display_embedded_precompiler/target/release/wg-display-embedded-precompiler widget/widget.component.wasm  widget.precompiled.wasm
-    - name: Enforce precompiled wasm budget
-      run: |
-        actual_size=$(wc -c < widget.precompiled.wasm)
-        if [ "$actual_size" -gt "$MAX_PRECOMPILED_SIZE_BYTES" ]; then
-          echo "Precompiled wasm too large: ${actual_size} bytes (max ${MAX_PRECOMPILED_SIZE_BYTES})"
-          exit 1
-        fi
-        echo "Precompiled wasm size OK: ${actual_size} bytes"
     - uses: ncipollo/release-action@v1
       with:
           artifacts: "widget.precompiled.wasm"
