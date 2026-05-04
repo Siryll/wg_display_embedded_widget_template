@@ -27,7 +27,7 @@ For reference implementations see:
 ## Install on device
 
 1. Push your widget to GitHub
-2. Create a new Tag, the Pipeline will automatically build and put the `widget.precompiled.wasm` binary into the release.
+2. Create a new Tag (needs to start with 'v', e.g. v0.0.1), the Pipeline will automatically build and put the `widget.precompiled.wasm` binary into the release.
 3. In the Web UI of the embedded WG-Display, click **Install from URL** and enter the direct download URL
 
 ---
