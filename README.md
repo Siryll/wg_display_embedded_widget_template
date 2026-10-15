@@ -2,6 +2,9 @@
 
 Template for creating Widgets for [WG-Display-Embedded-multi](https://github.com/Siryll/wg_display_embedded_multi), included with an automatic build pipeline to create the final widget binary.
 
+> [!NOTE]
+> The template for the legacy [WG-Display-Embedded](https://github.com/Siryll/wg_display_embedded) project was moved to the [legacy](https://github.com/Siryll/wg_display_embedded_precompiler/tree/legacy) branch.
+
 Widgets are Rust crates compiled to `wasm32-unknown-unknown` WebAssembly and packaged as WASM components using the [WIT Component Model](https://component-model.bytecodealliance.org/). They implement a standard interface (defined in WIT) and are installed and managed through the Web UI without needing to reflash the device.
 
 ---
