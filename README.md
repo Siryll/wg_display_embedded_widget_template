@@ -71,7 +71,7 @@ record widget-context {
 }
 
 record widget-result {
-    data: string,                // Text displayed on screen (or error message)
+    data: string,                // Layout JSON {"elements": [...]} (see `render` in widget/src/lib.rs), or plain text / error message
 }
 ```
 
