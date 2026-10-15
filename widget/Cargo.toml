@@ -1,17 +1,17 @@
 [package]
 name = "widget"
-version = "0.1.2"
+version = "1.0.0"
 edition = "2021"
 
 [lib]
 crate-type = ["cdylib"]
 
 [dependencies]
-wg-display-widget = { git = "https://github.com/Siryll/wg_display_embedded_widget_sdk", tag = "v0.1.0" }
-dlmalloc = { version = "0.2.11", features = ["global"] }
-serde = { version = "1.0.228", default-features = false, features = ["derive", "alloc"] }
-serde_json = {version = "1.0.149", default-features = false, features = ["alloc"] }
-schemars = { version = "1.2.1", default-features = false, features = ["derive"] }
+wg-display-widget = { git = "https://github.com/Siryll/wg_display_embedded_widget_sdk", tag = "v2.0.0" }
+dlmalloc = { version = "0.2.14", features = ["global"] }
+serde = { version = "1.0.229", default-features = false, features = ["derive", "alloc"] }
+serde_json = {version = "1.0.154", default-features = false, features = ["alloc"] }
+schemars = { version = "1.2.3", default-features = false, features = ["derive"] }
 
 [profile.release]
 opt-level = "z"
