@@ -303,6 +303,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "wg-display-widget"
+version = "0.1.0"
+dependencies = [
+ "wit-bindgen",
+]
+
+[[package]]
 name = "widget"
 version = "0.1.2"
 dependencies = [
@@ -310,7 +317,7 @@ dependencies = [
  "schemars",
  "serde",
  "serde_json",
- "wit-bindgen",
+ "wg-display-widget",
 ]
 
 [[package]]
