@@ -2,12 +2,7 @@ use schemars::{schema_for, JsonSchema};
 use serde::Deserialize;
 use serde_json::{Error, Value};
 
-use widget::widget::{http, logging};
-
-wit_bindgen::generate!({
-    path: "../wg_display_widget_wit/wit",
-    world: "widget"
-});
+use wg_display_widget::{export, http, logging, Guest, WidgetContext, WidgetResult};
 
 const WIDGET_NAME: &str = "ESP32 Widget Template";
 

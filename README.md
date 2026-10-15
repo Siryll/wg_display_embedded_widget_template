@@ -1,26 +1,29 @@
 # Widget Template Development
 
-Template for creating Widgets for the [WG-Display-Embedded](https://github.com/Siryll/wg_display_embedded), included with an automatic build pipeline to create the final widget binary.
+Template for creating Widgets for [WG-Display-Embedded-multi](https://github.com/Siryll/wg_display_embedded_multi), included with an automatic build pipeline to create the final widget binary.
 
-Widgets are Rust crates compiled to `wasm32-unknown-unknown` WebAssembly and packaged as WASM components using the [WIT Component Model](https://component-model.bytecodealliance.org/). They implement a standard interface (defined in WIT) and are installed and managed through the Web UI without reflashing the device.
+> [!NOTE]
+> The template for the legacy [WG-Display-Embedded](https://github.com/Siryll/wg_display_embedded) project was moved to the [legacy](https://github.com/Siryll/wg_display_embedded_widget_template/tree/legacy) branch.
+
+Widgets are Rust crates compiled to `wasm32-unknown-unknown` WebAssembly and packaged as WASM components using the [WIT Component Model](https://component-model.bytecodealliance.org/). They implement a standard interface (defined in WIT) and are installed and managed through the Web UI without needing to reflash the device.
 
 ---
 
 ## Quick Start
 
-Use the [Widget Template](https://github.com/Siryll/wg_display_embedded_widget_template) as a starting point:
+Create a repo based on this template, or clone it:
 
 ```bash
 git clone https://github.com/Siryll/wg_display_embedded_widget_template my-widget
 cd my-widget
 ```
 
-The template includes the correct `Cargo.toml`, WIT files, and a working `lib.rs` example.
+The template includes the correct `Cargo.toml`, a working `lib.rs` example and the release workflow.
 
-For reference implementations see:
+<!-- For reference implementations see:
 - [`wg_display_embedded_widget_time`](https://github.com/Siryll/wg_display_embedded_widget_time) — small time widget
 - [`wg_display_embedded_widget_aareguru`](https://github.com/Siryll/wg_display_embedded_widget_aareguru) — widget to display the current Aare temperature
-- [`wg_display_embedded_widget_public_transport`](https://github.com/Siryll/wg_display_embedded_widget_public_transport) — configurable widget to show public transport connections
+- [`wg_display_embedded_widget_public_transport`](https://github.com/Siryll/wg_display_embedded_widget_public_transport) — configurable widget to show public transport connections -->
 
 ---
 
@@ -93,10 +96,7 @@ interface http {
 ```
 
 **Limitations:**
-- Maximum response size: **~1MB** (HTTP client buffer limit)
 - Timeout: **30 seconds**
-- No TLS certificate verification
-- Redirects: automatic, up to 5 hops
 - No streaming — entire response is buffered
 
 #### `clocks`
@@ -107,7 +107,7 @@ interface clocks {
 }
 ```
 
-Returns the current UTC time (synced from `timeapi.io` at boot). `seconds` is a Unix timestamp; `nanoseconds` is the sub-second part. Returns `{0, 0}` if time has not been synced yet.
+Returns the current UTC time. `seconds` is a Unix timestamp; `nanoseconds` is the sub-second part. Returns `{0, 0}` if time has not been synced yet.
 
 #### `logging`
 
@@ -155,20 +155,14 @@ fn run(context: WidgetContext) -> WidgetResult {
 
 ## Manually Compiling and Installing
 
-### 1. Clone submodules
-
-```bash
-git submodule update --init
-```
-
-### 2. Compile to WASM
+### 1. Compile to WASM
 
 ```bash
 rustup target add wasm32-unknown-unknown
 cargo build --release --manifest-path widget/Cargo.toml --target wasm32-unknown-unknown
 ```
 
-### 3. Create a WASM component
+### 2. Create a WASM component
 Install `wasm-tools`:
 ```bash
 cargo install wasm-tools
@@ -180,18 +174,16 @@ wasm-tools component new \
   -o widget/widget.component.wasm
 ```
 
-### 4. Precompile for Wasmtime on ESP32
+### 3. Precompile for Wasmtime on ESP32
 
-The on-device runtime is unable to compile the binary at runtime, for that reason it needs to be compiled for the xtensa architecture beforehand.
+The on-device runtime is unable to compile the binary at runtime, for that reason it needs to be precompiled beforehand with the [precompiler](https://github.com/Siryll/wg_display_embedded_precompiler), see its README.
 
-```bash
-cargo build --release --manifest-path wg_display_embedded_precompiler/Cargo.toml
-./wg_display_embedded_precompiler/target/release/wg-display-embedded-precompiler widget/widget.component.wasm  widget.precompiled.wasm
-```
+## Updating
 
-## Size Constraints
+Should new versions with changes to the widget build process be released, then your widget needs to be update to be complatible again with the new version:
+- Update the `tag` of the `wg-display-widget` git dependency in `widget/Cargo.toml`.
+- Update the version of `Siryll/wg_display_embedded_precompiler@vX` in `.github/workflows/build_release.yml`.
 
-Since embedded WG Display version 1.3.0 the max size depends on the size of the download buffer, currently this is set to 1MB.
-Increase the buffer size in [http_client/mod.rs](https://github.com/Siryll/wg_display_embedded/blob/master/embedded_app/src/http_client/mod.rs) should your widget exceed this 1MB limit.
+Change both versions, run `cargo update -p wg-display-widget` in `widget/` and create a new tag.
 
 ---
